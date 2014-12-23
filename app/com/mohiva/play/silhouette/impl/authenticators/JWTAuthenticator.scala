@@ -61,31 +61,7 @@ case class JWTAuthenticator(
   loginInfo: LoginInfo,
   lastUsedDate: DateTime,
   expirationDate: DateTime,
-  idleTimeout: Option[Int]) extends StorableAuthenticator {
-
-  /**
-   * Checks if the authenticator isn't expired and isn't timed out.
-   *
-   * @return True if the authenticator isn't expired and isn't timed out.
-   */
-  def isValid = !isExpired && !isTimedOut
-
-  /**
-   * Checks if the authenticator is expired. This is an absolute timeout since the creation of
-   * the authenticator.
-   *
-   * @return True if the authenticator is expired, false otherwise.
-   */
-  private def isExpired = expirationDate.isBeforeNow
-
-  /**
-   * Checks if the time elapsed since the last time the authenticator was used is longer than
-   * the maximum idle timeout specified in the properties.
-   *
-   * @return True if sliding window expiration is activated and the authenticator is timed out, false otherwise.
-   */
-  private def isTimedOut = idleTimeout.isDefined && lastUsedDate.plusMinutes(idleTimeout.get).isBeforeNow
-}
+  idleTimeout: Option[Int]) extends StorableAuthenticator with ExpiryLike
 
 /**
  * The service that handles the JWT authenticator.
@@ -353,7 +329,7 @@ object JWTAuthenticatorService {
  * @param issuerClaim The issuer claim identifies the principal that issued the JWT.
  * @param encryptSubject Indicates if the subject should be encrypted in JWT.
  * @param authenticatorIdleTimeout The time in seconds an authenticator can be idle before it timed out.
- * @param authenticatorExpiry The expiry of the authenticator in minutes.
+ * @param authenticatorExpiry The expiry of the authenticator in seconds.
  * @param sharedSecret The shared secret to sign the JWT.
  */
 case class JWTAuthenticatorSettings(

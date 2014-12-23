@@ -51,31 +51,7 @@ case class SessionAuthenticator(
   lastUsedDate: DateTime,
   expirationDate: DateTime,
   idleTimeout: Option[Int],
-  fingerprint: Option[String]) extends Authenticator {
-
-  /**
-   * Checks if the authenticator isn't expired and isn't timed out.
-   *
-   * @return True if the authenticator isn't expired and isn't timed out.
-   */
-  def isValid = !isExpired && !isTimedOut
-
-  /**
-   * Checks if the authenticator is expired. This is an absolute timeout since the creation of
-   * the authenticator.
-   *
-   * @return True if the authenticator is expired, false otherwise.
-   */
-  private def isExpired = expirationDate.isBeforeNow
-
-  /**
-   * Checks if the time elapsed since the last time the authenticator was used is longer than
-   * the maximum idle timeout specified in the properties.
-   *
-   * @return True if sliding window expiration is activated and the authenticator is timed out, false otherwise.
-   */
-  private def isTimedOut = idleTimeout.isDefined && lastUsedDate.plusMinutes(idleTimeout.get).isBeforeNow
-}
+  fingerprint: Option[String]) extends Authenticator with ExpiryLike
 
 /**
  * The companion object of the authenticator.
