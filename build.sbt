@@ -14,6 +14,8 @@ name := "play-silhouette"
 
 version := "2.0-SNAPSHOT"
 
+resolvers += Resolver.jcenterRepo
+
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-test" % "2.3.6",
   "org.mindrot" % "jbcrypt" % "0.3m",
