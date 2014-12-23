@@ -32,8 +32,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 // Coveralls settings
 //*******************************
 
-instrumentSettings
-
 CoverallsPlugin.coverallsSettings
 
 //*******************************
@@ -106,10 +104,6 @@ scalacOptions ++= Seq(
 
 scalacOptions in Test ~= { (options: Seq[String]) =>
   options filterNot ( _ == "-Ywarn-dead-code" )  // Allow dead code in tests (to support using mockito).
-}
-
-scalacOptions in ScoverageTest ~= { (options: Seq[String]) =>
-  options filterNot ( _ == "-Ywarn-dead-code" )  // The same when running under scoverage.
 }
 
 //*******************************
