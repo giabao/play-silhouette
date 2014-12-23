@@ -1,10 +1,6 @@
 import play.PlayScala
 import play.core.PlayVersion
 import mohiva.sbt.Helper._
-import com.typesafe.sbt.SbtScalariform._
-import xerial.sbt.Sonatype._
-
-import scalariform.formatter.preferences.{PreserveDanglingCloseParenthesis, DoubleIndentClassDeclaration, FormatXml}
 
 //*******************************
 // Play settings
@@ -16,16 +12,15 @@ version := "2.0-SNAPSHOT"
 
 resolvers += Resolver.jcenterRepo
 
-libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-test" % "2.3.6",
-  "org.mindrot" % "jbcrypt" % "0.3m",
-  "com.atlassian.jwt" % "jwt-core" % "1.2.1",
-  "com.atlassian.jwt" % "jwt-api" % "1.2.1",
-  "org.mockito" % "mockito-core" % "1.9.5" % "test",
-  "net.codingwell" %% "scala-guice" % "4.0.0-beta4" % "test",
-  "com.typesafe.akka" %% "akka-testkit" % "2.3.3" % "test",
-  cache,
-  ws
+libraryDependencies ++= Seq(cache, ws,
+  "org.mindrot"       % "jbcrypt"       % "0.3m",
+  "com.atlassian.jwt" % "jwt-core"      % "1.2.3",
+  "com.atlassian.jwt" % "jwt-api"       % "1.2.3",
+  //TODO should we create a silhouette-test module to remove this optional dependency?
+  "com.typesafe.play" %% "play-test"    % "2.3.7"       % "optional",
+  "org.mockito"       % "mockito-core"  % "1.9.5"       % "test",
+  "net.codingwell"    %% "scala-guice"  % "4.0.0-beta5" % "test",
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.8"       % "test"
 )
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
@@ -37,47 +32,6 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 CoverallsPlugin.coverallsSettings
 
 //*******************************
-// Maven settings
-//*******************************
-
-sonatypeSettings
-
-organization := "com.mohiva"
-
-description := "Authentication library for Play Framework applications that supports several authentication methods, including OAuth1, OAuth2, OpenID, Credentials or custom authentication schemes"
-
-homepage := Some(url("http://silhouette.mohiva.com/"))
-
-licenses := Seq("Apache License" -> url("https://github.com/mohiva/play-silhouette/blob/master/LICENSE"))
-
-val pom = <scm>
-    <url>git@github.com:mohiva/play-silhouette.git</url>
-    <connection>scm:git:git@github.com:mohiva/play-silhouette.git</connection>
-  </scm>
-  <developers>
-    <developer>
-      <id>akkie</id>
-      <name>Christian Kaps</name>
-      <url>http://mohiva.com</url>
-    </developer>
-    <developer>
-      <id>fernandoacorreia</id>
-      <name>Fernando Correia</name>
-      <url>http://www.fernandocorreia.info/</url>
-    </developer>
-  </developers>
-
-publishMavenStyle := true
-
-publishArtifact in Test := false
-
-pomIncludeRepository := { _ => false }
-
-pomExtra := pom
-
-credentials += Credentials(Path.userHome / ".sbt" / "sonatype.credentials")
-
-//*******************************
 // Test settings
 //*******************************
 
@@ -87,9 +41,9 @@ parallelExecution in Test := false
 // Compiler settings
 //*******************************
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.4"
 
-crossScalaVersions := Seq("2.10.4", "2.11.1")
+crossScalaVersions := Seq("2.10.4", "2.11.4")
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -106,17 +60,6 @@ scalacOptions ++= Seq(
 
 // Allow dead code in tests (to support using mockito).
 scalacOptions in Test ~= { _.filter(_ != "-Ywarn-dead-code") }
-
-//*******************************
-// Scalariform settings
-//*******************************
-
-defaultScalariformSettings
-
-ScalariformKeys.preferences := ScalariformKeys.preferences.value
-  .setPreference(FormatXml, false)
-  .setPreference(DoubleIndentClassDeclaration, false)
-  .setPreference(PreserveDanglingCloseParenthesis, true)
 
 //*******************************
 // ScalaDoc settings
